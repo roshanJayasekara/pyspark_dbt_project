@@ -9,7 +9,7 @@ class Transformations:
     def dedup(self,df:DataFrame,dedup_col:List,cdc:str):
 
         df = df.withColumn("dedupKey",concat(*dedup_col))
-        df = df.withColumn("dedupCounts",row_number().over(Window.partitionBy("dedupKey").orderBy(cdc)))
+        df = df.withColumn("dedupCounts",row_number().over(Window.partitionBy("dedupKey").orderBy(desc(cdc))))
         df = df.filter(col("dedupCounts") == 1)
         df = df.drop("dedupKey","dedupCounts")
 
