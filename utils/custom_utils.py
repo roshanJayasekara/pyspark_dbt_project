@@ -1,7 +1,8 @@
 from typing import List
 from pyspark.sql import DataFrame
 from pyspark.sql.window import Window
-from pyspark.sql.functions import concat, col, row_number,desc
+from pyspark.sql.functions import concat, col, row_number,desc,current_timestamp
+
 
 class Transformations:
 
@@ -12,5 +13,11 @@ class Transformations:
         df = df.withColumn("dedupCounts",row_number().over(Window.partitionBy("dedupKey").orderBy(desc(cdc))))
         df = df.filter(col("dedupCounts") == 1)
         df = df.drop("dedupKey","dedupCounts")
+
+        return df
+    
+    def process_timestamp(self,df:DataFrame):
+        
+        df = df.withColumn("process_timestamp",current_timestamp())
 
         return df
